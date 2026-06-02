@@ -25,6 +25,30 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+#define SEGMENT_A		GPIO_PIN_4
+#define SEGMENT_A_PORT	'B'
+
+#define SEGMENT_B		GPIO_PIN_3
+#define SEGMENT_B_PORT	'B'
+
+#define SEGMENT_C		GPIO_PIN_8
+#define SEGMENT_C_PORT	'A'
+
+#define SEGMENT_D		GPIO_PIN_6
+#define SEGMENT_D_PORT	'B'
+
+#define SEGMENT_E		GPIO_PIN_7
+#define SEGMENT_E_PORT	'A'
+
+#define SEGMENT_F		GPIO_PIN_5
+#define SEGMENT_F_PORT	'B'
+
+#define SEGMENT_G		GPIO_PIN_10
+#define SEGMENT_G_PORT	'B'
+
+#define SEGMENT_DP		GPIO_PIN_9
+#define SEGMENT_DP_PORT	'A'
+
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -50,6 +74,36 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+void segment_on(uint16_t segment, char port);
+void segment_off(uint16_t segment, char port);
+
+void display_A(void);
+void display_B(void);
+void display_C(void);
+void display_D(void);
+void display_E(void);
+void display_F(void);
+void display_G(void);
+void display_H(void);
+void display_I(void);
+void display_J(void);
+void display_K(void);
+void display_L(void);
+void display_M(void);
+void display_N(void);
+void display_O(void);
+void display_P(void);
+void display_Q(void);
+void display_R(void);
+void display_S(void);
+void display_T(void);
+void display_Q(void);
+void display_V(void);
+void display_W(void);
+void display_X(void);
+void display_Y(void);
+void display_Z(void);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -111,23 +165,197 @@ int main(void)
 //	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);		// PB0 (D4)
 
 	  // PA7 & PB6
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);		// PA7 (E)
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);		// PB6 (D)
+//	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);		// PA7 (E)
+//	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);		// PB6 (D)
 
 	  // PA9 & PA8
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);		// PA9 (DP)
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);		// PA8 (C)
+//	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);		// PA9 (DP)
+//	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);		// PA8 (C)
 
 	  // PB10 & PB4
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);	// PB10 (G)
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);		// PB4 (A)
+//	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);	// PB10 (G)
+//	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);		// PB4 (A)
 
 	  // PB5 && PB3
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);		// PB5 (F)
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);		// PB3 (B)
+//	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);		// PB5 (F)
+//	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);		// PB3 (B)
+
+//	  segment_off(SEGMENT_A, SEGMENT_A_PORT);
+//	  segment_off(SEGMENT_B, SEGMENT_B_PORT);
+//	  segment_off(SEGMENT_C, SEGMENT_C_PORT);
+//	  segment_off(SEGMENT_D, SEGMENT_D_PORT);
+//	  segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+//	  segment_off(SEGMENT_E, SEGMENT_E_PORT);
+//	  segment_off(SEGMENT_F, SEGMENT_F_PORT);
+//	  segment_off(SEGMENT_G, SEGMENT_G_PORT);
+
+	  display_C();
 
   }
   /* USER CODE END 3 */
+}
+
+void segment_on(uint16_t segment, char port) {
+	if (port == 'B') {
+		HAL_GPIO_WritePin(GPIOB, segment, GPIO_PIN_RESET);
+	}
+	else {
+		HAL_GPIO_WritePin(GPIOA, segment, GPIO_PIN_RESET);
+	}
+	return;
+}
+
+void segment_off(uint16_t segment, char port) {
+	if (port == 'B') {
+		HAL_GPIO_WritePin(GPIOB, segment, GPIO_PIN_SET);
+	}
+	else {
+		HAL_GPIO_WritePin(GPIOA, segment, GPIO_PIN_SET);
+	}
+	return;
+}
+
+void display_A(void) {
+	segment_on(SEGMENT_A, SEGMENT_A_PORT);
+	segment_on(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_off(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_B(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_on(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_C(void) {
+	segment_on(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_off(SEGMENT_C, SEGMENT_C_PORT);
+	segment_on(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_off(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_D(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_on(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_on(SEGMENT_D, SEGMENT_D_PORT);
+	segment_on(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_off(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_E(void) {
+	segment_on(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_off(SEGMENT_C, SEGMENT_C_PORT);
+	segment_on(SEGMENT_D, SEGMENT_D_PORT);
+	segment_on(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_F(void) {
+	segment_on(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_off(SEGMENT_C, SEGMENT_C_PORT);
+	segment_off(SEGMENT_D, SEGMENT_D_PORT);
+	segment_on(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_G(void) {
+	segment_on(SEGMENT_A, SEGMENT_A_PORT);
+	segment_on(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_on(SEGMENT_D, SEGMENT_D_PORT);
+	segment_on(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_off(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_H(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_on(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_off(SEGMENT_D, SEGMENT_D_PORT);
+	segment_on(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_I(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_on(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_off(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_off(SEGMENT_E, SEGMENT_E_PORT);
+	segment_off(SEGMENT_F, SEGMENT_F_PORT);
+	segment_off(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_J(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_on(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_on(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_off(SEGMENT_E, SEGMENT_E_PORT);
+	segment_off(SEGMENT_F, SEGMENT_F_PORT);
+	segment_off(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_K(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_off(SEGMENT_C, SEGMENT_C_PORT);
+	segment_off(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_L(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_off(SEGMENT_C, SEGMENT_C_PORT);
+	segment_on(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_on(SEGMENT_F, SEGMENT_F_PORT);
+	segment_off(SEGMENT_G, SEGMENT_G_PORT);
+}
+
+void display_M(void) {
+	segment_on(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_on(SEGMENT_C, SEGMENT_C_PORT);
+	segment_off(SEGMENT_D, SEGMENT_D_PORT);
+	segment_on(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_on(SEGMENT_E, SEGMENT_E_PORT);
+	segment_off(SEGMENT_F, SEGMENT_F_PORT);
+	segment_on(SEGMENT_G, SEGMENT_G_PORT);
 }
 
 /**
