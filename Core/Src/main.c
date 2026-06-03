@@ -66,6 +66,20 @@
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
 
+typedef enum {
+	BUTTON_RELEASED = 0,
+	BUTTON_PRESSED_DEBOUNCE,
+	BUTTON_HELD
+} ButtonState;
+
+ButtonState btnState = BUTTON_RELEASED;
+uint32_t pressStartTime = 0;
+uint32_t holdDuration = 0;
+
+int morseCode[4] = {0, 0, 0, 0};
+int morseCodeIndex = 0;
+
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -77,6 +91,7 @@ static void MX_USART2_UART_Init(void);
 void segment_on(uint16_t segment, char port);
 void segment_off(uint16_t segment, char port);
 
+void display_off(void);
 void display_A(void);
 void display_B(void);
 void display_C(void);
@@ -104,6 +119,10 @@ void display_W(void);
 void display_X(void);
 void display_Y(void);
 void display_Z(void);
+
+void check_button_hold(void);
+
+void morse_code_transcribe(void);
 
 /* USER CODE BEGIN PFP */
 
@@ -145,6 +164,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);		// PA0 (D1)
+  display_off();
 
   /* USER CODE END 2 */
 
@@ -154,15 +175,10 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET) {			// check if button is press
-		  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET);			// PA5 LED
-	  }
-	  else {
-		  HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET);
-	  }
+	  check_button_hold();
 
+	  /*
 	  // PA0 & PA1
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);		// PA0 (D1)
 //	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);		// PA1 (D2)
 
 	  // PA4 & PB0
@@ -184,68 +200,7 @@ int main(void)
 	  // PB5 && PB3
 //	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);		// PB5 (F)
 //	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);		// PB3 (B)
-
-//	  segment_off(SEGMENT_A, SEGMENT_A_PORT);
-//	  segment_off(SEGMENT_B, SEGMENT_B_PORT);
-//	  segment_off(SEGMENT_C, SEGMENT_C_PORT);
-//	  segment_off(SEGMENT_D, SEGMENT_D_PORT);
-//	  segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
-//	  segment_off(SEGMENT_E, SEGMENT_E_PORT);
-//	  segment_off(SEGMENT_F, SEGMENT_F_PORT);
-//	  segment_off(SEGMENT_G, SEGMENT_G_PORT);
-
-//	  display_A();
-//	  HAL_Delay(500);
-//	  display_B();
-//	  HAL_Delay(500);
-//	  display_C();
-//	  HAL_Delay(500);
-//	  display_D();
-//	  HAL_Delay(500);
-//	  display_E();
-//	  HAL_Delay(500);
-//	  display_F();
-//	  HAL_Delay(500);
-//	  display_G();
-//	  HAL_Delay(500);
-//	  display_H();
-//	  HAL_Delay(500);
-//	  display_I();
-//	  HAL_Delay(500);
-//	  display_J();
-//	  HAL_Delay(500);
-//	  display_K();
-//	  HAL_Delay(500);
-//	  display_L();
-//	  HAL_Delay(500);
-//	  display_M();
-//	  HAL_Delay(500);
-//	  display_N();
-//	  HAL_Delay(500);
-//	  display_O();
-//	  HAL_Delay(500);
-//	  display_P();
-//	  HAL_Delay(500);
-//	  display_Q();
-//	  HAL_Delay(500);
-//	  display_R();
-//	  HAL_Delay(500);
-//	  display_S();
-//	  HAL_Delay(500);
-//	  display_T();
-//	  HAL_Delay(500);
-//	  display_U();
-//	  HAL_Delay(500);
-//	  display_V();
-//	  HAL_Delay(500);
-//	  display_W();
-//	  HAL_Delay(500);
-//	  display_X();
-//	  HAL_Delay(500);
-//	  display_Y();
-//	  HAL_Delay(500);
-//	  display_Z();
-//	  HAL_Delay(500);
+		*/
 
   }
   /* USER CODE END 3 */
@@ -269,6 +224,56 @@ void segment_off(uint16_t segment, char port) {
 		HAL_GPIO_WritePin(GPIOA, segment, GPIO_PIN_SET);
 	}
 	return;
+}
+
+void check_button_hold(void) {
+	if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET) {
+		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET);
+		if (btnState == BUTTON_RELEASED) {
+			pressStartTime = HAL_GetTick();
+			btnState = BUTTON_PRESSED_DEBOUNCE;
+		}
+		else if (btnState == BUTTON_PRESSED_DEBOUNCE) {
+			// Check if press has lasted longer than 50ms (Debounce period)
+			if ((HAL_GetTick() - pressStartTime) >= 50) {
+				btnState = BUTTON_HELD;
+			}
+		}
+		else if (btnState == BUTTON_HELD) {
+			// Calculate how long button has been held down so far
+			holdDuration = HAL_GetTick() - pressStartTime;
+		}
+	}
+	else {
+		// Button is released or not pressed
+		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET);
+		if (btnState == BUTTON_HELD) {
+			// Button was held, now we know the exact duration
+			if (holdDuration >= 2000) {
+				// Do "Long Press" Action (e.g., >= 2 seconds)
+				morseCode[morseCodeIndex] = 2;
+				morseCodeIndex += 1;
+			} else {
+				// Do "Short Press" Action
+				morseCode[morseCodeIndex] = 1;
+				morseCodeIndex += 1;
+			}
+		}
+		// Reset state
+		btnState = BUTTON_RELEASED;
+		holdDuration = 0;
+	}
+}
+
+void display_off(void) {
+	segment_off(SEGMENT_A, SEGMENT_A_PORT);
+	segment_off(SEGMENT_B, SEGMENT_B_PORT);
+	segment_off(SEGMENT_C, SEGMENT_C_PORT);
+	segment_off(SEGMENT_D, SEGMENT_D_PORT);
+	segment_off(SEGMENT_DP, SEGMENT_DP_PORT);
+	segment_off(SEGMENT_E, SEGMENT_E_PORT);
+	segment_off(SEGMENT_F, SEGMENT_F_PORT);
+	segment_off(SEGMENT_G, SEGMENT_G_PORT);
 }
 
 void display_A(void) {
