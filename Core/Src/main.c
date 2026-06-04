@@ -69,15 +69,16 @@ UART_HandleTypeDef huart2;
 typedef enum {
 	BUTTON_RELEASED = 0,
 	BUTTON_PRESSED_DEBOUNCE,
-	BUTTON_HELD
+	BUTTON_HELD,
+	WAITING_FOR_GAP
 } ButtonState;
 
 ButtonState btnState = BUTTON_RELEASED;
 uint32_t pressStartTime = 0;
 uint32_t holdDuration = 0;
 
-int morseCode[4] = {0, 0, 0, 0};
-int morseCodeIndex = 0;
+uint8_t morseCode[4] = {0, 0, 0, 0};
+uint8_t morseCodeIndex = 0;
 
 
 /* USER CODE BEGIN PV */
@@ -226,9 +227,96 @@ void segment_off(uint16_t segment, char port) {
 	return;
 }
 
+void morse_code_transcribe(void) {
+	uint8_t index = 0;
+	if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 0 && morseCode[3] == 0) {
+		display_A();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 1) {
+		display_B();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 1) {
+		display_C();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 0) {
+		display_D();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 0 && morseCode[2] = 0 && morseCode[3] == 0) {
+		display_E();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 1) {
+		display_F();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 0) {
+		display_G();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 1) {
+		display_H();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 1) {
+		display_I();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 2) {
+		display_J();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 0) {
+		display_K();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 1) {
+		display_L();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 0 && morseCode[3] == 0) {
+		display_M();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 0 && morseCode[3] == 0) {
+		display_N();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 0) {
+		display_O();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 1) {
+		display_P();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 2) {
+		display_Q();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 0) {
+		display_R();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 0) {
+		display_S();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 0 && morseCode[2] = 0 && morseCode[3] == 0) {
+		display_T();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 0) {
+		display_U();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 2) {
+		display_V();
+	}
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 0) {
+		display_W();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 2) {
+		display_X();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 2) {
+		display_Y();
+	}
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 1) {
+		display_Z();
+	}
+	else {
+		display_off();
+	}
+
+	return;
+}
+
 void check_button_hold(void) {
-	if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET) {
-		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET);
+	if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET) { // check if B1 button being press
+		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET); // turn LED on
 		if (btnState == BUTTON_RELEASED) {
 			pressStartTime = HAL_GetTick();
 			btnState = BUTTON_PRESSED_DEBOUNCE;
@@ -244,24 +332,45 @@ void check_button_hold(void) {
 			holdDuration = HAL_GetTick() - pressStartTime;
 		}
 	}
-	else {
-		// Button is released or not pressed
-		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET);
+	else { // B1 button is not press
+		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET); // turn LED off
+
 		if (btnState == BUTTON_HELD) {
 			// Button was held, now we know the exact duration
-			if (holdDuration >= 2000) {
-				// Do "Long Press" Action (e.g., >= 2 seconds)
+			if (holdDuration >= 180) { // 20 WPM (Conversational)
+				// Do "Long Press" Action "Dash" (e.g., >= 180 ms)
 				morseCode[morseCodeIndex] = 2;
 				morseCodeIndex += 1;
-			} else {
+			}
+			else if (holdDuration <= 60) { // Dot
 				// Do "Short Press" Action
 				morseCode[morseCodeIndex] = 1;
 				morseCodeIndex += 1;
 			}
+			if (i > 3) { // too long for a character
+				i = 0;
+			}
+			releaseStartTime = HAL_GetTick();
+			btnState = WAITING_FOR_GAP;
+
 		}
-		// Reset state
-		btnState = BUTTON_RELEASED;
-		holdDuration = 0;
+		else if (btnState == WAITING_FOR_GAP) {
+			// if not press for 420 ms
+			gapDuration = HAL_GetTick() - releaseStartTime;
+
+			if (gapDuration >= 420) {
+				// transcribe the recorded signal into a letter
+				morse_code_transcribe();
+
+				// Reset state
+				morseCode[0] = 0;
+				morseCode[1] = 0;
+				morseCode[2] = 0;
+				morseCode[3] = 0;
+				btnState = BUTTON_RELEASED;
+				holdDuration = 0;
+			}
+		}
 	}
 }
 
