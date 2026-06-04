@@ -76,6 +76,8 @@ typedef enum {
 ButtonState btnState = BUTTON_RELEASED;
 uint32_t pressStartTime = 0;
 uint32_t holdDuration = 0;
+uint32_t releaseStartTime = 0;
+uint32_t gapDuration = 0;
 
 uint8_t morseCode[4] = {0, 0, 0, 0};
 uint8_t morseCodeIndex = 0;
@@ -121,6 +123,7 @@ void display_X(void);
 void display_Y(void);
 void display_Z(void);
 
+void reset_morse(void);
 void check_button_hold(void);
 
 void morse_code_transcribe(void);
@@ -228,83 +231,82 @@ void segment_off(uint16_t segment, char port) {
 }
 
 void morse_code_transcribe(void) {
-	uint8_t index = 0;
-	if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 0 && morseCode[3] == 0) {
+	if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] == 0 && morseCode[3] == 0) {
 		display_A();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 1) {
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 1) {
 		display_B();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 1) {
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] == 2 && morseCode[3] == 1) {
 		display_C();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 0) {
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 0) {
 		display_D();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 0 && morseCode[2] = 0 && morseCode[3] == 0) {
+	else if (morseCode[0] == 1 && morseCode[1] == 0 && morseCode[2] == 0 && morseCode[3] == 0) {
 		display_E();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 1) {
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] == 2 && morseCode[3] == 1) {
 		display_F();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 0) {
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] == 1 && morseCode[3] == 0) {
 		display_G();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 1) {
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 1) {
 		display_H();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 1) {
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 1) {
 		display_I();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 2) {
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] == 2 && morseCode[3] == 2) {
 		display_J();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 0) {
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 0) {
 		display_K();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 1) {
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] == 1 && morseCode[3] == 1) {
 		display_L();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 0 && morseCode[3] == 0) {
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] == 0 && morseCode[3] == 0) {
 		display_M();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 0 && morseCode[3] == 0) {
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] == 0 && morseCode[3] == 0) {
 		display_N();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 0) {
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] == 2 && morseCode[3] == 0) {
 		display_O();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 1) {
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] == 2 && morseCode[3] == 1) {
 		display_P();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 2) {
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] == 1 && morseCode[3] == 2) {
 		display_Q();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 0) {
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] == 1 && morseCode[3] == 0) {
 		display_R();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 0) {
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 0) {
 		display_S();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 0 && morseCode[2] = 0 && morseCode[3] == 0) {
+	else if (morseCode[0] == 2 && morseCode[1] == 0 && morseCode[2] == 0 && morseCode[3] == 0) {
 		display_T();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 0) {
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] == 2 && morseCode[3] == 0) {
 		display_U();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 2) {
+	else if (morseCode[0] == 1 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 2) {
 		display_V();
 	}
-	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] = 2 && morseCode[3] == 0) {
+	else if (morseCode[0] == 1 && morseCode[1] == 2 && morseCode[2] == 2 && morseCode[3] == 0) {
 		display_W();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 1 && morseCode[3] == 2) {
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] == 1 && morseCode[3] == 2) {
 		display_X();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] = 2 && morseCode[3] == 2) {
+	else if (morseCode[0] == 2 && morseCode[1] == 1 && morseCode[2] == 2 && morseCode[3] == 2) {
 		display_Y();
 	}
-	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] = 1 && morseCode[3] == 1) {
+	else if (morseCode[0] == 2 && morseCode[1] == 2 && morseCode[2] == 1 && morseCode[3] == 1) {
 		display_Z();
 	}
 	else {
@@ -314,12 +316,36 @@ void morse_code_transcribe(void) {
 	return;
 }
 
+void reset_morse(void) {
+    morseCode[0] = 0;
+    morseCode[1] = 0;
+    morseCode[2] = 0;
+    morseCode[3] = 0;
+    morseCodeIndex = 0;
+    gapDuration = 0;
+    releaseStartTime = 0;
+    holdDuration = 0;
+}
+
+void store_morse_symbol(uint8_t symbol) {
+	if (morseCodeIndex < 4) {
+		morseCode[morseCodeIndex] = symbol;
+		morseCodeIndex += 1;
+	}
+	else {
+		reset_morse();
+	}
+}
+
 void check_button_hold(void) {
 	if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET) { // check if B1 button being press
 		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET); // turn LED on
-		if (btnState == BUTTON_RELEASED) {
-			pressStartTime = HAL_GetTick();
-			btnState = BUTTON_PRESSED_DEBOUNCE;
+		if (btnState == BUTTON_RELEASED || btnState == WAITING_FOR_GAP) {
+		    pressStartTime = HAL_GetTick();
+		    holdDuration = 0;
+		    gapDuration = 0;
+		    releaseStartTime = 0;
+		    btnState = BUTTON_PRESSED_DEBOUNCE;
 		}
 		else if (btnState == BUTTON_PRESSED_DEBOUNCE) {
 			// Check if press has lasted longer than 50ms (Debounce period)
@@ -337,19 +363,27 @@ void check_button_hold(void) {
 
 		if (btnState == BUTTON_HELD) {
 			// Button was held, now we know the exact duration
-			if (holdDuration >= 180) { // 20 WPM (Conversational)
+			if (holdDuration > 300) { // 20 WPM (Conversational)
 				// Do "Long Press" Action "Dash" (e.g., >= 180 ms)
-				morseCode[morseCodeIndex] = 2;
-				morseCodeIndex += 1;
+				store_morse_symbol(2);
 			}
-			else if (holdDuration <= 60) { // Dot
+			else if (holdDuration <= 300) { // Dot
 				// Do "Short Press" Action
-				morseCode[morseCodeIndex] = 1;
-				morseCodeIndex += 1;
+				store_morse_symbol(1);
 			}
-			if (i > 3) { // too long for a character
-				i = 0;
-			}
+//			if (morseCodeIndex > 3) { // too long for a character
+//				morseCodeIndex = 0;
+//				// Reset state
+//				morseCode[0] = 0;
+//				morseCode[1] = 0;
+//				morseCode[2] = 0;
+//				morseCode[3] = 0;
+//				morseCodeIndex = 0;
+//				gapDuration = 0;
+//				releaseStartTime = 0;
+//				btnState = BUTTON_RELEASED;
+//				holdDuration = 0;
+//			}
 			releaseStartTime = HAL_GetTick();
 			btnState = WAITING_FOR_GAP;
 
@@ -358,7 +392,7 @@ void check_button_hold(void) {
 			// if not press for 420 ms
 			gapDuration = HAL_GetTick() - releaseStartTime;
 
-			if (gapDuration >= 420) {
+			if (gapDuration >= 1000) {
 				// transcribe the recorded signal into a letter
 				morse_code_transcribe();
 
@@ -367,6 +401,9 @@ void check_button_hold(void) {
 				morseCode[1] = 0;
 				morseCode[2] = 0;
 				morseCode[3] = 0;
+				morseCodeIndex = 0;
+				gapDuration = 0;
+				releaseStartTime = 0;
 				btnState = BUTTON_RELEASED;
 				holdDuration = 0;
 			}
